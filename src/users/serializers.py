@@ -37,16 +37,18 @@ class UserSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         """Validate that passwords match."""
+        # Check if passwords match - basic validation
         if attrs.get('password') != attrs.get('password_confirm'):
             raise serializers.ValidationError("Passwords don't match.")
         return attrs
 
     def create(self, validated_data):
         """Create a new user with validated data."""
+        # Remove password_confirm since we don't need it in the DB
         validated_data.pop('password_confirm', None)
         password = validated_data.pop('password')
         user = User.objects.create_user(**validated_data)
-        user.set_password(password)
+        user.set_password(password)  # Hash the password properly
         user.save()
         return user
 

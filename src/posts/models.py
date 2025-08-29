@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinLengthValidator
 
+# TODO: Consider adding image upload functionality instead of just URLs
+
 
 class Post(models.Model):
     """Model for user posts in the social media platform."""
@@ -32,6 +34,7 @@ class Post(models.Model):
         ]
 
     def __str__(self):
+        # Truncate long posts for readability in admin
         return f"{self.author.username}: {self.content[:50]}{'...' if len(self.content) > 50 else ''}"
 
     @property

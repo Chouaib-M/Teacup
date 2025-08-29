@@ -57,6 +57,7 @@ class PostSerializer(serializers.ModelSerializer):
         """Check if the current user has liked this post."""
         request = self.context.get('request')
         if request and request.user.is_authenticated:
+            # Could optimize this with a prefetch_related but it's fine for now
             return Like.objects.filter(user=request.user, post=obj).exists()
         return False
 

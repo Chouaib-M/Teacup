@@ -16,9 +16,28 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.http import JsonResponse
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 
+def api_root(request):
+    """API root endpoint showing available endpoints"""
+    return JsonResponse({
+        'message': 'Welcome to Teacup Social Media API',
+        'version': '1.0.0',
+        'endpoints': {
+            'users': '/api/v1/users/',
+            'posts': '/api/v1/posts/',
+            'feed': '/api/v1/feed/',
+            'comments': '/api/v1/comments/',
+            'admin': '/admin/',
+            'api_docs': '/api/docs/',
+            'api_schema': '/api/schema/',
+            'authentication': '/api/v1/auth/',
+        }
+    })
+
 urlpatterns = [
+    path('', api_root, name='api-root'),
     path('admin/', admin.site.urls),
     
     # API endpoints

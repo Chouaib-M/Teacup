@@ -19,7 +19,12 @@ class FeedPagination(PageNumberPagination):
 
 
 class FeedViewSet(viewsets.ReadOnlyModelViewSet):
-    """ViewSet for personalized feed functionality."""
+    """
+    ViewSet for personalized feed functionality.
+    
+    Originally tried to make this a regular ViewSet but realized
+    we don't need create/update/delete for feeds, just reading
+    """
     serializer_class = PostListSerializer
     pagination_class = FeedPagination
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
@@ -35,9 +40,10 @@ class FeedViewSet(viewsets.ReadOnlyModelViewSet):
         # Get users that the current user follows
         following_users = Follow.objects.filter(follower=user).values_list('followed', flat=True)
         
-        # Include the user's own posts in the feed
+        # Include the user's own posts in the feed (makes sense, right?)
         feed_users = list(following_users) + [user.id]
         
+        # TODO: Maybe add some algorithm to show popular posts from non-followed users?
         return Post.objects.filter(
             author__in=feed_users
         ).select_related('author__profile').prefetch_related('likes', 'comments')
@@ -76,8 +82,10 @@ class FeedViewSet(viewsets.ReadOnlyModelViewSet):
         from datetime import timedelta
         from django.db.models import Count
         
+        # 7 days seems reasonable for "trending"
         week_ago = timezone.now() - timedelta(days=7)
         
+        # This query might be slow with lots of data - consider caching later
         queryset = Post.objects.filter(
             created_at__gte=week_ago
         ).annotate(

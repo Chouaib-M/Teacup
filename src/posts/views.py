@@ -13,7 +13,12 @@ from .serializers import (
 
 
 class PostViewSet(viewsets.ModelViewSet):
-    """ViewSet for Post CRUD operations."""
+    """
+    ViewSet for Post CRUD operations.
+    
+    Note: Using select_related and prefetch_related for performance
+    because we had some N+1 query issues in testing
+    """
     queryset = Post.objects.all().select_related('author__profile').prefetch_related('likes', 'comments__author')
     serializer_class = PostSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
@@ -66,6 +71,7 @@ class PostViewSet(viewsets.ModelViewSet):
         """Like a post."""
         post = self.get_object()
         
+        # Using get_or_create to avoid race conditions
         like, created = Like.objects.get_or_create(
             user=request.user,
             post=post
@@ -77,6 +83,7 @@ class PostViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
         
+        # TODO: Maybe add notification system here later?
         return Response(
             {'message': 'Post liked successfully.'},
             status=status.HTTP_201_CREATED

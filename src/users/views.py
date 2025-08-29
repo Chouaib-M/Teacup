@@ -14,7 +14,11 @@ from .serializers import (
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    """ViewSet for User CRUD operations."""
+    """
+    ViewSet for User CRUD operations.
+    
+    TODO: Maybe add rate limiting for user creation to prevent spam accounts
+    """
     queryset = User.objects.all().select_related('profile')
     serializer_class = UserSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
@@ -30,11 +34,14 @@ class UserViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         """Set permissions based on action."""
+        # Allow anyone to create accounts (registration)
         if self.action == 'create':
             permission_classes = [permissions.AllowAny]
+        # Only authenticated users can modify/delete
         elif self.action in ['update', 'partial_update', 'destroy']:
-            permission_classes = [permissions.IsAuthenticated]
+            permission_classes = [permissions.IsAuthenticated] 
         else:
+            # Default: read-only for anonymous, full access for authenticated
             permission_classes = [permissions.IsAuthenticatedOrReadOnly]
         
         return [permission() for permission in permission_classes]
@@ -84,6 +91,7 @@ class UserViewSet(viewsets.ModelViewSet):
         """Follow a user."""
         user_to_follow = self.get_object()
         
+        # Prevent users from following themselves (that would be weird lol)
         if request.user == user_to_follow:
             return Response(
                 {'error': 'You cannot follow yourself.'},

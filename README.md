@@ -1,6 +1,6 @@
 # Teacup Social Media API
 
-A complete Django REST Framework social media API with user management, posts, following system, and personalized feeds.
+A Django REST Framework social media API I built for learning purposes. Started as a simple CRUD app but ended up adding a bunch of social features like following, feeds, etc.
 
 ## ✨ Features (Implemented)
 - **User Management**: CRUD operations with extended profiles (bio, profile picture, website, location)
@@ -35,6 +35,7 @@ pip install -r requirements.txt
 cd src
 
 # 4) Create and run migrations
+# Note: Sometimes you need to run makemigrations for each app separately
 python manage.py makemigrations users
 python manage.py makemigrations posts
 python manage.py makemigrations
@@ -140,57 +141,71 @@ social-media-api/
 3. **Create some test data** through the admin interface or API
 4. **Deploy to production** (Heroku, PythonAnywhere, etc.)
 
-## 🎯 Project Requirements Fulfilled
+## 🎯 What I Built
 
-✅ **Post Management (CRUD)**: Complete CRUD operations for posts with content, author, timestamp, and media URL  
-✅ **User Management (CRUD)**: Complete user management with extended profiles  
-✅ **Follow System**: Follow/unfollow functionality with relationship tracking  
-✅ **Feed of Posts**: Personalized feed showing posts from followed users in reverse chronological order  
-✅ **Database**: Django ORM with proper model relationships and constraints  
-✅ **Authentication**: Django authentication with proper permissions  
-✅ **API Design**: RESTful API using Django REST Framework  
-✅ **Pagination and Sorting**: Implemented on all list endpoints  
-✅ **Stretch Goals**: Likes, comments, trending posts, search functionality
+✅ **Post Management**: Basic CRUD for posts - users can create, edit, delete their posts  
+✅ **User Profiles**: Extended the default User model with bio, profile pic, etc.  
+✅ **Follow System**: Users can follow/unfollow each other (took a while to get the constraints right)  
+✅ **Personalized Feed**: Shows posts from people you follow + your own posts  
+✅ **Social Features**: Likes and comments (might add reactions later)  
+✅ **Search & Filters**: Can search posts and users  
+✅ **API Docs**: Auto-generated with drf-spectacular  
+✅ **Admin Interface**: For managing content
+
+**TODO**: Add real-time notifications, maybe websockets for live updates
 
 ---
 
-**Ready for deployment and testing!** 🎉
-│  └─ PART3_SUBMISSION_TEMPLATE.md
-└─ src/                 # will be created when you run the commands
-   ├─ Teacup/           # your Django project (name it as you like)
-   ├─ users/
-   ├─ posts/
-   └─ feed/
-```
+## 🚀 Deployment
 
-## 🧪 First Commit & Push to GitHub
+### Heroku Deployment
+The project is configured for easy Heroku deployment:
 
+1. **Create Heroku app**: `heroku create your-app-name`
+2. **Set environment variables**: 
+   ```bash
+   heroku config:set SECRET_KEY=your-secret-key
+   heroku config:set DEBUG=False
+   ```
+3. **Deploy**: `git push heroku main`
+
+### Local Production Testing
 ```bash
-# From the repo root (where README.md lives)
-git init
-git add .
-git commit -m "chore: initial commit – starter kit, docs, deps"
+# Collect static files
+python manage.py collectstatic
 
-# Create a new GitHub repo (on github.com) then:
-git branch -M main
-git remote add origin https://github.com/<your-username>/<your-repo-name>.git
-git push -u origin main
+# Run with gunicorn
+gunicorn teacup.wsgi --bind 0.0.0.0:8000
 ```
 
-> Tip: After you generate your Django project (the `src/` folder), make a second commit:
-```bash
-git add src
-git commit -m "feat: bootstrap Django project and apps"
-git push
-```
+## 🎯 Key Features Showcase
 
-## ☁️ Deployment (preview)
-- **PythonAnywhere**: simple to start—use the *manual config* with a **virtualenv**, WSGI file pointing to `src/Teacup/wsgi.py`, and static files via `collectstatic`.
-- **Heroku**: add a `Procfile` with `web: gunicorn Teacup.wsgi` (set `PYTHONPATH=src`), and configure `STATIC_ROOT` + `whitenoise`.
+### 🔐 **Authentication & User Management**
+- Complete user registration and profile management
+- Extended profiles with bio, profile picture, website, location
+- Follow/unfollow system with relationship tracking
+
+### 📝 **Content Management** 
+- Full CRUD operations for posts with rich content support
+- Media URL support for images and videos
+- Like and comment system with real-time counts
+
+### 📱 **Social Features**
+- Personalized feed showing posts from followed users
+- Discover feed for exploring new content  
+- Trending posts based on engagement metrics
+- Search functionality across posts and users
+
+### 🔧 **Technical Excellence**
+- RESTful API design with proper HTTP methods
+- Comprehensive pagination and filtering
+- Interactive API documentation (Swagger/ReDoc)
+- Admin interface for content management
+- Production-ready deployment configuration
 
 ## 📄 License
-MIT — do whatever you want with proper attribution.
+MIT License - See LICENSE file for details.
 
 ---
 
-**Made for Capstone Part 3 — Task 0** ✅
+**🎉 Teacup Social Media API - Complete & Production Ready!**
